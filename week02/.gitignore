@@ -1,0 +1,4 @@
+fasta/
+gff/
+reports/*_assembly_stats.txt
+reports/*_feature_count.txt
