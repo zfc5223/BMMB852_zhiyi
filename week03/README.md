@@ -2,7 +2,7 @@
 
 ## Repository
 
-I reviewed one of the assigned classmate repositories.
+I reviewed one of the classmate repositories.
 
 - Original repository: `https://github.com/hec5351/Applied-Bioinformatics`
 - My fork: `https://github.com/zfc5223/Haley_Applied-Bioinformatics`
