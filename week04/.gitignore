@@ -1,0 +1,6 @@
+metadata/
+reads/
+qc/
+logs/
+reports/*
+!reports/ena_summary.tsv

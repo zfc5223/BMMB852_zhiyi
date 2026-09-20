@@ -1,0 +1,11 @@
+category	value	runs
+all	runs	169
+layout	PAIRED	30
+layout	SINGLE	139
+platform	ILLUMINA	50
+platform	LS454	109
+platform	OXFORD_NANOPORE	10
+strategy	OTHER	114
+strategy	RNA-Seq	37
+strategy	WGA	5
+strategy	WGS	13
