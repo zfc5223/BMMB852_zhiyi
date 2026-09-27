@@ -2,8 +2,6 @@
 
 ## Data Used
 
-This assignment builds on the previous two data assignments.
-
 Reference genome from Week 2:
 
 ```text
@@ -134,8 +132,6 @@ Because these reads are transcriptomic, the coverage is not uniform. Only a smal
 
 ## IGV Visualization
 
-To view the BAM in IGV:
-
 1. Load the Week 2 genome FASTA:
 
 ```text
@@ -154,8 +150,23 @@ week05/bam/H_pylori_26695_SRR031127.sorted.bam
 ../week02/gff/Helicobacter_pylori_26695.gff.gz
 ```
 
-Add the IGV screenshot here:
-
-```markdown
 ![BAM alignment in IGV](images/bam_igv_view.png)
+
+This screenshot shows the sorted BAM file aligned to the _H. pylori_ 26695
+reference genome. The view is centered around:
+
+```text
+NC_000915.1:1,295,509-1,295,576
 ```
+
+The gray bars are aligned reads from `SRR031127`. The coverage track above them
+shows local read depth, and the blue GFF track shows an annotated feature on the
+reference genome. The sequence and translation tracks are shown below.
+
+The coverage is not uniform across the genome. This is expected because
+`SRR031127` is transcriptomic Illumina/Solexa data, not genomic DNA WGS data.
+The BAM therefore shows reads only in expressed regions covered by this small
+subset.
+
+Some colored bases and `N` bases are visible in the aligned reads. These indicate
+mismatches or uncertain bases relative to the reference.
