@@ -94,9 +94,7 @@ specific region has noticeably increased read coverage compared with the
 surrounding genome, which suggests increased copy number.
 
 In the detailed paired-read view, many read pairs in and around this region have
-abnormal pair orientations. The combination of increased coverage and abnormal
-orientation supports a duplication more strongly than a simple inversion,
-because an inversion would usually preserve copy number.
+abnormal pair orientations. 
 
 ## Sample 4
 
