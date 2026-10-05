@@ -13,3 +13,5 @@ Week 3: Peer Review and Pull Request
 Week 4: Obtain FASTQ Data from SRA
 
 Week 5: Generate a BAM File
+
+Week 6: Evaluate Structural Variants
