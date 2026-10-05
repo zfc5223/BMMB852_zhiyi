@@ -61,7 +61,7 @@ breakpoints, inversions, and smaller insertions.
 
 ![Sample 1 IGV view](images/sample_1.png)
 
-Sample 1 appears to contain a small insertion relative to the reference genome.
+Sample 1 appears to contain small variants and insertion relative to the reference genome.
 Multiple independent reads show an insertion mark (`I`) at the same genomic
 position, giving consistent read-level support for a localized insertion event.
 
@@ -93,7 +93,7 @@ single localized structural variant.
 
 ![Sample 3 paired-read detail](images/sample_3-2.png)
 
-Sample 3 most likely contains a tandem duplication. In the whole-genome view, a
+Sample 3 most likely contains replication. In the whole-genome view, a
 specific region has noticeably increased read coverage compared with the
 surrounding genome, which suggests increased copy number.
 
