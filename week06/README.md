@@ -70,10 +70,6 @@ There is no obvious large coverage loss or gain across the genome, so the main
 signal is a small local insertion rather than a large deletion, duplication, or
 other broad structural rearrangement.
 
-This conclusion is based on repeated IGV insertion marks at the same location. A
-variant caller would be needed to report the exact inserted sequence and formal
-genotype.
-
 ## Sample 2
 
 ![Sample 2 IGV view](images/sample_2.png)
