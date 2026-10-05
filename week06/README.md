@@ -119,11 +119,4 @@ relative to the reference genome.
 
 ![Sample 5 IGV view](images/sample_5.png)
 
-Sample 5 most likely contains a large deletion. Many paired-end reads span the
-same region with an abnormally large apparent insert size, shown by long
-colored connections between read mates.
-
-The intervening region also shows a strong reduction in read coverage. This is
-the expected visual pattern when sequence present in the reference genome is
-absent from the sample: reads from both sides of the deletion map farther apart
-on the reference, and few reads align inside the deleted interval.
+Sample 5 most likely contains a large translocation.
