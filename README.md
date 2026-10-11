@@ -15,3 +15,5 @@ Week 4: Obtain FASTQ Data from SRA
 Week 5: Generate a BAM File
 
 Week 6: Evaluate Structural Variants
+
+Week 7: Generate a VCF File

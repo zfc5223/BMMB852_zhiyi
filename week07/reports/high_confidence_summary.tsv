@@ -1,0 +1,6 @@
+metric	value
+filter	QUAL>=30 and DP>=10
+total_variants	70
+snv	39
+indel	31
+other	0

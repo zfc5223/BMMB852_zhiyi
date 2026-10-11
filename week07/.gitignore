@@ -1,0 +1,13 @@
+reads/
+bam/
+vcf/
+logs/
+reports/*.tsv
+reports/*.txt
+reports/*.html
+reports/*.json
+reports/*.zip
+!reports/variant_summary.tsv
+!reports/high_confidence_summary.tsv
+!reports/coverage_summary.tsv
+images/
