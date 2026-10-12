@@ -80,15 +80,32 @@ Variant calls are computational predictions. To decide which calls look real, I 
 
 ## IGV
 
-Load these files in IGV:
+I loaded the reference, BAM, VCF, and annotation files in IGV:
 
 1. Genome: `../week02/fasta/Helicobacter_pylori_26695.fa`
 2. Alignment: `bam/H_pylori_26695_SRR12829274_N100000.sorted.bam`
 3. Variants: `vcf/H_pylori_26695_SRR12829274_N100000.vcf.gz`
 4. Annotation: `../week02/gff/Helicobacter_pylori_26695.gff.gz`
 
-Screenshot to add after visual inspection:
+I inspected the region:
 
 ```text
-images/vcf_igv_view.png
+NC_000915.1:208,139-208,204
 ```
+
+![VCF variant in IGV](images/vcf_igv_view.png)
+
+This screenshot shows an indel call at `NC_000915.1:208,167`. In the VCF
+popup, the reference allele is `A` and the alternate allele is `AG`, so this is
+an insertion of one `G` relative to the reference genome. The call has high
+variant quality (`QUAL=228.408`) and high read depth (`DP=163`). The genotype is
+reported as `AG`, and the allele depth is `AD=6,152`, meaning that most reads at
+this position support the alternate allele rather than the reference allele.
+
+The BAM alignment track supports this call visually: many reads span the
+variant position, and the inserted `G` is visible at the same genomic location
+across many reads. This makes the call more credible than low-depth calls such
+as variants supported by only one read. However, this is still a computational
+variant call rather than a confirmed biological mutation. Because indels can be
+affected by short-read alignment artifacts, especially around repeated bases, I
+interpret this site as a well-supported candidate variant.

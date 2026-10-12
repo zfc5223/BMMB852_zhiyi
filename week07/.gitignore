@@ -10,4 +10,5 @@ reports/*.zip
 !reports/variant_summary.tsv
 !reports/high_confidence_summary.tsv
 !reports/coverage_summary.tsv
-images/
+images/*
+!images/vcf_igv_view.png
