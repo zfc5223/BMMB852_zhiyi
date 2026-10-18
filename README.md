@@ -17,3 +17,5 @@ Week 5: Generate a BAM File
 Week 6: Evaluate Structural Variants
 
 Week 7: Generate a VCF File
+
+Week 8: Predict Variant Effects

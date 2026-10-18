@@ -1,0 +1,11 @@
+reads/
+bam/
+vcf/
+logs/
+annotation/
+reports/*.tsv
+reports/*.txt
+reports/*.html
+reports/*.json
+images/*
+!images/effect_igv_view.png
