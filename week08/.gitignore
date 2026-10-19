@@ -3,6 +3,8 @@ bam/
 vcf/
 logs/
 annotation/
+snpeff/data/
+snpeff/*.log
 reports/*.tsv
 reports/*.txt
 reports/*.html

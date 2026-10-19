@@ -1,61 +1,56 @@
 # Week 8: Predict Variant Effects
 
-This assignment extends the Week 7 single-sample VCF to a multisample VCF and predicts the effects of coding variants in _Helicobacter pylori_.
+Make a multisample VCF from three _Helicobacter pylori_ isolates and explain
+the effect of coding variants in that VCF.
 
-## Samples and sequencing runs
+The point of the multisample VCF is comparison: at the same reference
+coordinate, I can see which isolates carry the alternate allele.
 
-The assignment asks for at least three samples in one multisample VCF. In SRA,
-an `SRR` accession identifies a sequencing run. A biological sample can have
-one run or several runs, so a run is not automatically the same thing as an
-independent biological sample. In this analysis, each selected run represents
-one independent _H. pylori_ isolate, which gives three different biological
-genome backgrounds:
+## Samples
 
-| Biological sample used here | SRA run | Why it was included |
-|---|---|---|
-| `H_pylori_SRR12829274_N50000` | `SRR12829274` | The Week 7 sample; it already produced a useful BAM and VCF. |
-| `H_pylori_SRR8369179_N50000` | `SRR8369179` | An independent _H. pylori_ WGS isolate, used to add a second genome background. |
-| `H_pylori_SRR27606652_N50000` | `SRR27606652` | Another independent paired-end _H. pylori_ WGS isolate, used to make the comparison multisample. |
+I used three independent isolates from the same _H. pylori_ WGS study:
 
-The Week 5 BAM was not used because it was made from a very small transcriptomic read subset and had poor genome-wide coverage. I also did not count three runs from the same biological sample as three samples: that would increase sequencing data but would not add independent biological information. These three runs were selected because they are genomic DNA, paired-end Illumina WGS data from _H. pylori_. They are different isolates, so differences from the 26695 reference are expected. They should not be interpreted as biological replicates of one experimental condition.
+| Sample                         | SRA run        |
+| ------------------------------ | -------------- |
+| `H_pylori_SRR8369177_N50000` | `SRR8369177` |
+| `H_pylori_SRR8369178_N50000` | `SRR8369178` |
+| `H_pylori_SRR8369179_N50000` | `SRR8369179` |
 
-If the same biological sample had multiple sequencing runs, I would combine the
-reads from those runs before alignment and variant calling, producing one BAM
-and one genotype for that sample. I would not put those technical runs into
-the multisample VCF as separate biological samples. Here, each run is used as
-one sample because the metadata identify the runs as independent _H. pylori_
-isolates rather than repeat sequencing of one isolate.
+The three runs are listed in the same _H. pylori_ isolate study:
+[https://pmc.ncbi.nlm.nih.gov/articles/PMC7545276/](https://pmc.ncbi.nlm.nih.gov/articles/PMC7545276/).
 
-The workflow uses `N=50000` read spots per run. This keeps the download and computation practical while giving each sample more information than the old Week 5 BAM. Change the value reproducibly with `make N=100000` if more depth is needed.
+All reads are aligned to the same _H. pylori_ 26695 reference, so the coordinates are comparable.
+
+Here I used 50,000 paired-end spots per isolate. This produced about 72,500--73,600 called sites per sample;
+these are reference-relative calls, not measurements of biological function.
 
 ## Software choice
 
-I used `bcftools` for both the multisample VCF operations and effect prediction:
+The tools have separate jobs:
 
-- `bcftools merge` combines the three single-sample VCFs while preserving sample names and genotypes.
-- `bcftools csq` predicts coding consequences using the local reference FASTA and the matching NCBI GFF3 annotation.
+- `bcftools mpileup` and `bcftools call --ploidy 1` call variants from each
+  BAM. _H. pylori_ is haploid, so the haploid calling model is appropriate.
+- `bcftools merge` combines the three single-sample VCFs while preserving the
+  sample genotypes. This is the multisample step taught in the course.
+- `SnpEff` predicts coding effects. The course material specifically uses
+  `SnpEff`, and its `ANN` output reports the gene, consequence, coding change,
+  and protein change in one record.
 
-This choice is appropriate here because the reference, GFF, contig name (`NC_000915.1`), and VCF were all produced for the same _H. pylori_ 26695 assembly. `bcftools csq` is already available in the course environment, so no new installation or external annotation database is required. `SnpEff` would also be a reasonable annotator, but it is not installed in the course environment and would require building or locating a compatible custom _H. pylori_ database. `VEP` and `ANNOVAR` are powerful, but their commonly packaged databases are mainly human-focused; using them without a verified custom database could give misleading annotations for this bacterial genome.
+The Makefile builds a small custom `HP26695` SnpEff database from the same 26695 FASTA and NCBI GFF used in the
+alignment and in IGV. This keeps the reference, annotation, and effect
+prediction consistent for _H. pylori_.
 
-The NCBI GFF contains CDS features attached directly to genes, whereas `bcftools csq` expects a transcript-to-CDS hierarchy. The Makefile therefore creates `annotation/Helicobacter_pylori_26695.csq.gff3` from the same NCBI GFF. This is a format conversion, not a new annotation source: coordinates, strand, phase, and CDS sequence are retained.
-
-## Reproduce the analysis
+## Reproduce
 
 ```bash
 pixi run -m "$HOME/edu/bioinfo" make -C week08 all
 ```
 
-The Makefile performs the following steps for each sample:
+The Makefile downloads the read subsets, trims and aligns them, creates one
+BAM and one VCF per isolate, merges the VCFs, builds the local SnpEff database,
+and annotates the merged VCF.
 
-1. Download the same-size paired-end read subset from SRA.
-2. Trim reads with `fastp`.
-3. Align reads to the Week 2 _H. pylori_ 26695 reference with `bwa mem`.
-4. Sort and index each BAM with `samtools`.
-5. Call haploid variants with `bcftools mpileup` and `bcftools call --ploidy 1`.
-6. Merge the three VCFs with `bcftools merge`.
-7. Predict coding effects with `bcftools csq` using NCBI genetic code 11 from the GFF annotation.
-
-Main outputs:
+Important outputs:
 
 ```text
 vcf/H_pylori_multisample_N50000.vcf.gz
@@ -64,62 +59,54 @@ reports/sample_summary.tsv
 reports/effect_summary.tsv
 ```
 
-The final VCF contains three named isolate samples. In this run, the numbers of called
-sites were 193 for `SRR12829274`, 72,510 for `SRR8369179`, and 64,706 for
-`SRR27606652`. The counts differ because the isolates have different sequence
-differences relative to the 26695 reference and because the same read subset
-does not give identical coverage in every genome. The effect summary contains
-62,709 synonymous, 29,960 missense, 153 frameshift, 73 in-frame deletion, 84
-in-frame insertion, 60 stop-gained, 69 stop-lost, and 30 start-lost
-annotations. These are annotation counts, not counts of experimentally
-validated functional changes.
+The annotated VCF has these sample columns:
 
-## Interpreting the annotations
+```text
+H_pylori_SRR8369177_N50000
+H_pylori_SRR8369178_N50000
+H_pylori_SRR8369179_N50000
+```
 
-The annotated VCF stores predicted consequences in the `BCSQ` INFO field. The important categories include:
+## Variant examples
 
-- `missense`: a coding change that changes one amino acid.
-- `synonymous`: a coding change that does not change the amino acid.
-- `stop_gained`: a change that creates a premature stop codon.
-- `frameshift`: an insertion or deletion that changes the reading frame.
+SnpEff writes effects in the VCF `ANN` field. The two examples below show the
+comparison use of the multisample VCF:
 
-These are predictions relative to the 26695 reference, not experimental measurements of protein function. A nonsynonymous or frameshift call should be checked in IGV and interpreted with its read depth, mapping quality, allele support, and location in the gene.
+| Coordinate            | Gene     | Coding codon   | Protein change        | Isolates with ALT              | Effect               |
+| --------------------- | -------- | -------------- | --------------------- | ------------------------------ | -------------------- |
+| `NC_000915.1:21861` | `eptA` | `AAC -> AGC` | Asn286Ser (`N286S`) | `SRR8369177`, `SRR8369178` | `missense_variant` |
+| `NC_000915.1:78906` | `glmM` | `AAG -> CAG` | Lys401Gln (`K401Q`) | `SRR8369178`, `SRR8369179` | `missense_variant` |
 
-For each example selected from `BCSQ`, I record:
-
-1. the chromosome and position;
-2. the gene and coding feature;
-3. the reference and alternate codons;
-4. the predicted amino-acid change;
-5. the samples carrying the alternate allele;
-6. whether the BAM reads support the call.
-
-The codon and amino-acid change must be copied from the actual annotated VCF produced by the Makefile. This avoids guessing from the forward genomic strand when a gene is on the reverse strand.
+The first record is genomic `T>C`. Because `eptA` is on the reverse strand,
+the coding-strand change is `AAC -> AGC`; SnpEff reports `c.857A>G` and
+`p.Asn286Ser`. The genotypes are `1/1, 1/1, .` in the sample order above, so
+the alternate allele is called in the first two isolates. SnpEff also flags the
+`eptA` feature as `WARNING_TRANSCRIPT_NO_START_CODON`; the example therefore
+focuses on the internal amino-acid change.
 
 ## IGV evidence
 
-For one selected coding variant, load the following in IGV:
+I visualized the `eptA` variant in IGV using the 26695 reference FASTA, the
+`SRR8369177` BAM, the final annotated multisample VCF, and the matching GFF:
 
-1. `../week02/fasta/Helicobacter_pylori_26695.fa`
-2. one or more BAM files from `bam/`
-3. `vcf/H_pylori_multisample_N50000.annotated.vcf.gz`
-4. `../week02/gff/Helicobacter_pylori_26695.gff.gz`
+- `../week02/fasta/Helicobacter_pylori_26695.fa`
+- `bam/H_pylori_SRR8369177_N50000.sorted.bam`
+- `vcf/H_pylori_multisample_N50000.annotated.vcf.gz`
+- `../week02/gff/Helicobacter_pylori_26695.gff.gz`
 
-Zoom until the nucleotide sequence, translated coding track, VCF marker, and individual reads are visible. The screenshot should show the exact coordinate in the IGV window and should include the variant popup or enough of the translated track to connect the VCF position to the coding sequence. A wide genome view is not sufficient evidence for a codon change.
+The view covers `NC_000915.1:21830-21890` and shows the variant marker at
+position 21,861, the BAM coverage and reads, the reference sequence, and the
+translated coding feature. The `eptA` feature is on the reverse strand, so the
+coding-strand change is `AAC -> AGC` even though the genomic change is `T>C`.
+The variant popup identifies the same site as a SNP with reference `T` and
+alternate `C`, and displays the SnpEff `ANN` annotation.
 
-![Variant effect in IGV](images/effect_igv_view.png)
+![IGV view of the eptA variant](images/effect_igv_view.png)
 
-The screenshot and the table below should describe the same variant. The screenshot is evidence that the call is aligned with a coding feature; the VCF annotation supplies the codon and amino-acid prediction.
+The screenshot is the alignment evidence. The matching software result is:
 
-## Results table
-
-The following examples are from the actual `BCSQ` output:
-
-| Coordinate | Gene | Reference codon | Alternate codon | Amino-acid change | Samples with ALT | Effect |
-|---|---|---|---|---|---|---|
-| `NC_000915.1:555` | `nusB` | `AAA` | `GAA` | Lys27Glu (`K27E`) | `SRR27606652` | missense |
-| `NC_000915.1:639` | `ribH` | `GGT` | `GAT` | Gly156Asp (`G156D`) | `SRR8369179` | missense |
-
-The codons in this table are written in the coding direction. Both genes are on the reverse strand, so the genomic reference and alternate bases must be reverse-complemented before forming the codons. The amino-acid changes and gene names come from the `BCSQ` field; the codons were checked against the reference FASTA and the CDS strand.
-
-Do not call a variant a confirmed functional mutation based only on this workflow. The results are reference-relative predictions supported by short-read alignments.
+```text
+NC_000915.1  21861  T  C  DP=30
+ANN: missense_variant | MODERATE | eptA | c.857A>G | p.Asn286Ser
+GT:  1/1  1/1  .
+```
