@@ -11,6 +11,8 @@ PROJECT ?= H_pylori
 SAMPLES := $(shell awk -F',' 'NR > 1 && $$2 != "" {print $$2}' $(DESIGN))
 VCFS := $(foreach sample,$(SAMPLES),vcf/$(sample)_N$(N).vcf.gz)
 MERGED := vcf/$(PROJECT)_multisample_N$(N).vcf.gz
+SUMMARY := reports/$(PROJECT)_sample_summary_N$(N).tsv
+STATS := reports/$(PROJECT)_merged_N$(N).stats
 
 RUN ?=
 SAMPLE ?=
@@ -25,7 +27,7 @@ VCF := vcf/$(PREFIX).vcf.gz
 
 .PHONY: all check check-sample batch merge sample clean
 
-all: check batch merge reports/sample_summary.tsv reports/merged.stats
+all: check batch merge $(SUMMARY) $(STATS)
 
 check:
 	@test -s $(DESIGN) || { echo "Missing design file: $(DESIGN)"; exit 1; }
@@ -97,10 +99,10 @@ $(MERGED).tbi: batch | vcf
 
 merge: $(MERGED).tbi
 
-reports/sample_summary.tsv: $(MERGED).tbi | reports
+$(SUMMARY): $(MERGED).tbi | reports
 	@{ echo -e "sample\tcalled_sites"; for sample in $(SAMPLES); do count=$$(bcftools query -s $$sample -i 'GT!="."' -f '%CHROM\n' $(MERGED) | wc -l); echo -e "$$sample\t$$count"; done; } > $@
 
-reports/merged.stats: $(MERGED).tbi | reports
+$(STATS): $(MERGED).tbi | reports
 	bcftools stats $(MERGED) > $@
 
 clean:

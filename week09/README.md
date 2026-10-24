@@ -215,8 +215,16 @@ vcf/H_pylori_multisample_N50000.vcf.gz
 vcf/H_pylori_multisample_N50000.vcf.gz.tbi
 ```
 
-Other useful outputs are `reports/sample_summary.tsv`,
-`reports/merged.stats`, and `logs/parallel.joblog`.
+Other useful outputs are:
+
+```text
+reports/H_pylori_sample_summary_N50000.tsv
+reports/H_pylori_merged_N50000.stats
+logs/parallel.joblog
+```
+
+The `PROJECT` and `N` values are included in report names so that results from
+different projects or test sizes do not overwrite one another.
 
 To remove generated files and start again:
 
