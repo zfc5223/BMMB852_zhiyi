@@ -22,7 +22,9 @@ SRA run
 ```
 
 The sample VCFs are merged after all sample jobs finish. This is a merge of
-independent sample calls, not joint genotyping.
+independent sample calls, not joint genotyping. The workflow also accepts a
+single row for a small test, although multiple samples are needed for a
+meaningful multisample comparison.
 
 The workflow writes generated files to:
 

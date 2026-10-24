@@ -48,7 +48,7 @@ $(REF).bwt: $(REF)
 $(REF).fai: $(REF)
 	samtools faidx $(REF)
 
-$(RAW_DONE): check-sample | reads/raw logs
+$(RAW_DONE): | check-sample reads/raw logs
 	fastq-dump --split-files --skip-technical -X $(N) -O reads/raw $(RUN) > logs/$(PREFIX).fastq-dump.log 2>&1
 	@test -s reads/raw/$(RUN)_1.fastq || { echo "Missing R1 FASTQ from $(RUN)"; exit 1; }
 	@test -s reads/raw/$(RUN)_2.fastq || { echo "Missing R2 FASTQ from $(RUN)"; exit 1; }
@@ -84,7 +84,15 @@ batch: check | logs
 
 $(MERGED).tbi: batch | vcf
 	@for vcf in $(VCFS); do test -s "$$vcf" && test -s "$$vcf.tbi" || { echo "Missing sample VCF: $$vcf"; exit 1; }; done
-	bcftools merge -m all -Oz -o $(MERGED) $(VCFS)
+	@if test -s $(MERGED) && test -s $@; then \
+		stale=0; \
+		for vcf in $(VCFS); do \
+			test "$$vcf" -nt $(MERGED) && stale=1; \
+			test "$$vcf.tbi" -nt $(MERGED) && stale=1; \
+		done; \
+		if test "$$stale" -eq 0; then exit 0; fi; \
+	fi; \
+	bcftools merge --force-single -m all -Oz -o $(MERGED) $(VCFS) && \
 	tabix -p vcf $(MERGED)
 
 merge: $(MERGED).tbi
