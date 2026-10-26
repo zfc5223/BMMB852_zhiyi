@@ -197,7 +197,18 @@ The accession remains in `design.csv`; `prefetch` only makes the data available
 in the local SRA cache.
 
 ## Current example
+### Genome selected
 
+I selected the complete RefSeq genome for **Helicobacter pylori 26695**.
+
+- Organism: `Helicobacter pylori 26695`
+- RefSeq assembly: `GCF_000008525.1_ASM852v1`
+- Assembly name: `ASM852v1`
+- Data source: NCBI RefSeq FTP
+- FASTA: `GCF_000008525.1_ASM852v1_genomic.fna.gz`
+- GFF: `GCF_000008525.1_ASM852v1_genomic.gff.gz`
+
+### Samples selected
 The example contains three independent _Helicobacter pylori_ isolates from
 BioProject `PRJNA362473`:
 
