@@ -1,0 +1,19 @@
+reference/
+reads/
+qc/
+bam/
+coverage/
+peaks/
+logs/
+results/*.bed
+results/*_N*.tsv
+results/*_signals.tsv
+results/*_signals.npz
+__pycache__/
+*.pyc
+
+# The repository-level ignore rules exclude Pixi files by default.  This
+# workflow keeps its own environment definition and lock file under version control.
+!pixi.toml
+!pixi.lock
+

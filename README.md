@@ -17,3 +17,4 @@ results for that project.
 | Week 7 | Generate a VCF file | [README](./week07/README.md) |
 | Week 8 | Predict variant effects | [README](./week08/README.md) |
 | Week 9 | Parallel bacterial variant calling | [README](./week09/README.md) |
+| Week 10 | ChIP-seq and ATAC-seq peak calling | [README](./week10/README.md) |

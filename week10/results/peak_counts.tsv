@@ -1,0 +1,9 @@
+sample	assay	group	replicate	peaks
+atac_control_r1	ATAC	Control	1	90529
+atac_control_r2	ATAC	Control	2	78077
+atac_il6_r1	ATAC	IL6	1	85950
+atac_il6_r2	ATAC	IL6	2	82132
+pstat3_control_r1	pSTAT3	Control	1	36
+pstat3_control_r2	pSTAT3	Control	2	18
+pstat3_il6_r1	pSTAT3	IL6	1	62278
+pstat3_il6_r2	pSTAT3	IL6	2	67034

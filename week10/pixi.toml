@@ -1,0 +1,19 @@
+[workspace]
+channels = ["conda-forge", "bioconda"]
+name = "chipseq-atacseq"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[dependencies]
+make = ">=4.4,<5"
+sra-tools = ">=3.2,<4"
+fastqc = ">=0.12,<0.13"
+bowtie2 = ">=2.5,<3"
+samtools = ">=1.20,<2"
+macs3 = ">=3.0,<4"
+bedtools = ">=2.31,<3"
+deeptools = ">=3.5,<4"
+pigz = ">=2.8,<3"
+wget = ">=1.24,<2"
+python = ">=3.11,<3.13"
+

@@ -1,0 +1,7 @@
+class	pstat3_peaks
+IL6_pSTAT3_consensus	55005
+IL6_gained_pSTAT3	54973
+IL6_gained_and_ATAC_open	33702
+preexisting_accessible	30987
+candidate_newly_accessible	935
+control_ATAC_ambiguous	1780

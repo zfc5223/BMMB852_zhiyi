@@ -1,0 +1,5 @@
+assay	group	replicate_1	replicate_2	intersection_bp	union_bp	jaccard	overlapping_intervals
+ATAC	Control	atac_control_r1	atac_control_r2	37922460	61729129	0.614337	65867
+ATAC	IL6	atac_il6_r1	atac_il6_r2	36901859	60052125	0.614497	66205
+pSTAT3	Control	pstat3_control_r1	pstat3_control_r2	3175	8536	0.371954	15
+pSTAT3	IL6	pstat3_il6_r1	pstat3_il6_r2	24675887	34965360	0.705724	56756
