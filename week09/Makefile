@@ -5,7 +5,9 @@ N ?= 50000
 JOBS ?= 3
 THREADS ?= 1
 DESIGN ?= design.csv
-REF ?= ../week02/fasta/Helicobacter_pylori_26695.fa
+DEFAULT_REF := refs/Helicobacter_pylori_26695.fa
+REF ?= $(DEFAULT_REF)
+REF_URL := https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/008/525/GCF_000008525.1_ASM852v1/GCF_000008525.1_ASM852v1_genomic.fna.gz
 PROJECT ?= H_pylori
 
 SAMPLES := $(shell awk -F',' 'NR > 1 && $$2 != "" {print $$2}' $(DESIGN))
@@ -25,16 +27,18 @@ TRIM_R2 := reads/trimmed/$(PREFIX)_R2.trimmed.fastq
 BAM := bam/$(PREFIX).sorted.bam
 VCF := vcf/$(PREFIX).vcf.gz
 
-.PHONY: all check check-sample batch merge sample clean
+.PHONY: all check check-sample reference batch merge sample clean
 
-all: check batch merge $(SUMMARY) $(STATS)
+all: check reference batch merge $(SUMMARY) $(STATS)
 
 check:
 	@test -s $(DESIGN) || { echo "Missing design file: $(DESIGN)"; exit 1; }
 	@test "$$(head -n 1 $(DESIGN) | cut -d, -f1-2)" = "Run,Sample" || { echo "The first two design columns must be Run,Sample"; exit 1; }
 	@test "$$(awk -F',' 'NR > 1 && (NF < 2 || $$1 == "" || $$2 == "") {bad=1} END {print bad+0}' $(DESIGN))" = "0" || { echo "Each design row needs a Run and Sample value"; exit 1; }
 	@test "$$(awk -F',' 'NR > 1 {seen[$$2]++; if (seen[$$2] > 1) bad=1} END {print bad+0}' $(DESIGN))" = "0" || { echo "Sample names must be unique"; exit 1; }
-	@test -s $(REF) || { echo "Missing reference FASTA: $(REF)"; exit 1; }
+	@if test "$(REF)" != "$(DEFAULT_REF)"; then \
+		test -s "$(REF)" || { echo "Missing custom reference FASTA: $(REF)"; exit 1; }; \
+	fi
 	@test -n "$(SAMPLES)" || { echo "Design file has no samples"; exit 1; }
 
 check-sample:
@@ -43,6 +47,21 @@ check-sample:
 
 reads/raw reads/trimmed bam vcf logs reports:
 	mkdir -p $@
+
+reference: $(REF)
+
+$(DEFAULT_REF):
+	@mkdir -p $(dir $@)
+	@set -eu; \
+		archive="$@.gz.tmp"; fasta="$@.tmp"; \
+		trap 'rm -f "$$archive" "$$fasta"' EXIT; \
+		echo "Downloading H. pylori 26695 reference (GCF_000008525.1)..."; \
+		wget -q --show-progress --continue --timeout=30 --tries=3 -O "$$archive" "$(REF_URL)"; \
+		gzip -dc "$$archive" > "$$fasta"; \
+		test -s "$$fasta"; \
+		mv "$$fasta" "$@"; \
+		rm -f "$$archive"; \
+		trap - EXIT
 
 $(REF).bwt: $(REF)
 	bwa index $(REF)
@@ -79,7 +98,7 @@ $(VCF).tbi: $(VCF)
 
 sample: check-sample $(VCF).tbi
 
-batch: check | logs
+batch: check reference $(REF).bwt $(REF).fai | logs
 	@cat $(DESIGN) | parallel --colsep , --header : --jobs $(JOBS) --line-buffer \
 		--joblog logs/parallel.joblog \
 		'$(MAKE) --no-print-directory sample RUN={Run} SAMPLE={Sample} N=$(N) THREADS=$(THREADS)'

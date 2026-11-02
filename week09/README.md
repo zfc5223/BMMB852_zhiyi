@@ -8,6 +8,17 @@ The workflow is designed for **small haploid bacterial genomes**. It assumes tha
 the runs are **paired-end** and that all samples are analysed against the same
 reference genome.
 
+## Quick start
+
+From the repository root, run:
+
+```bash
+cd week09
+pixi run -m "$HOME/edu/bioinfo" make all
+```
+
+The default reference downloads automatically when it is missing. 
+
 ## Analysis
 
 Each row in `design.csv` is processed independently:
@@ -47,6 +58,7 @@ The workflow root contains the design file:
 week09/
 ├── design.csv
 ├── Makefile
+├── refs/        generated default reference and indexes
 └── README.md
 ```
 
@@ -63,38 +75,36 @@ SRR8369179,H_pylori_SRR8369179
 sample ID in the VCF. Sample IDs must be unique. Additional metadata columns
 can follow these two columns.
 
-The reference FASTA is supplied with `REF`. The current example uses:
+By default, the workflow uses the exact RefSeq assembly
+`GCF_000008525.1` for *H. pylori* 26695:
 
 ```text
-../week02/fasta/Helicobacter_pylori_26695.fa
+refs/Helicobacter_pylori_26695.fa
 ```
 
-Reference indexes are created beside the FASTA. FASTQ files do not need to be
-downloaded manually; the workflow obtains them from the SRA accessions.
+If this default FASTA is absent, `make` downloads the compressed genomic FASTA
+from NCBI RefSeq, decompresses it safely, and saves it at that path. Failed or
+incomplete downloads are removed. `bwa index` and `samtools faidx` then create
+indexes beside the FASTA.
+
+The reference remains configurable. When `REF=/path/to/custom.fa` is supplied,
+that file must already exist; the workflow never downloads or overwrites a
+custom reference. All samples in a run must be compatible with the selected
+reference. FASTQ files do not need to be downloaded manually because the
+workflow obtains them from the SRA accessions.
 
 ## Environment
 
-The commands use the course Pixi environment at `$HOME/edu/bioinfo`. It
-contains the tools used here:
+This workflow uses only tools included in the standard course `bioinfo`
+environment:
 
 ```text
-make parallel sra-tools fastp bwa samtools bcftools tabix
+make parallel sra-tools fastp bwa samtools bcftools tabix wget gzip
 ```
 
-To create that environment:
-
-```bash
-mkdir -p "$HOME/edu/bioinfo"
-cd "$HOME/edu/bioinfo"
-pixi init
-pixi workspace channel add bioconda
-pixi project platform add osx-arm64 linux-64
-pixi add make bwa samtools bcftools trimmomatic sra-tools fastqc seqkit fastp parallel \
-  csvtk wget ncbi-datasets-cli ucsc-bedgraphtobigwig bedtools \
-  jq python=3.12 'biopython<1.86' bio
-```
-
-The Makefile uses the existing environment; it does not install packages.
+No additional package is required for this workflow. The Makefile does not
+install or update software. The commands below explicitly use the course
+environment at `$HOME/edu/bioinfo`, so it does not need to be activated first.
 
 ## Running the workflow
 
@@ -112,7 +122,7 @@ N=50000       paired-end spots downloaded per SRA run
 JOBS=3        samples processed simultaneously
 THREADS=1     threads used inside each sample job
 DESIGN=design.csv
-REF=../week02/fasta/Helicobacter_pylori_26695.fa
+REF=refs/Helicobacter_pylori_26695.fa
 PROJECT=H_pylori
 ```
 
@@ -197,6 +207,7 @@ The accession remains in `design.csv`; `prefetch` only makes the data available
 in the local SRA cache.
 
 ## Current example
+
 ### Genome selected
 
 I selected the complete RefSeq genome for **Helicobacter pylori 26695**.
@@ -206,9 +217,9 @@ I selected the complete RefSeq genome for **Helicobacter pylori 26695**.
 - Assembly name: `ASM852v1`
 - Data source: NCBI RefSeq FTP
 - FASTA: `GCF_000008525.1_ASM852v1_genomic.fna.gz`
-- GFF: `GCF_000008525.1_ASM852v1_genomic.gff.gz`
 
 ### Samples selected
+
 The example contains three independent _Helicobacter pylori_ isolates from
 BioProject `PRJNA362473`:
 
