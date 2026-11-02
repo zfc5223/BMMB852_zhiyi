@@ -1,0 +1,2 @@
+bin	transcript	chrom	strand	txStart	txEnd	cdsStart	cdsEnd	exonCount	exonStarts	exonEnds	score	gene	cdsStartStat	cdsEndStat	exonFrames
+831	NM_032648.3	chr1	+	32247221	32248856	32247421	32248601	2	32247221,32248370,	32247682,32248856,	0	FAM167B	cmpl	cmpl	0,0,

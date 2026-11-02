@@ -125,45 +125,103 @@ regions.
 Load the built-in `hg38` genome in IGV. Then load the eight CPM bigWigs from
 `coverage/` and the eight experimental narrowPeak files from `peaks/` in this
 order: ATAC control replicates, ATAC IL6 replicates, pSTAT3 control replicates,
-and pSTAT3 IL6 replicates. Apply the same data range to all four ATAC bigWigs
-and another shared range to all four pSTAT3 bigWigs so that track autoscaling
-does not exaggerate condition differences.
+and pSTAT3 IL6 replicates, placing each narrowPeak track immediately below
+its corresponding bigWig. Blue coverage denotes control and red coverage
+IL6; narrowPeak rectangles indicate called intervals, not coverage intensity.
+The red outlines highlight the loci of interest and are not exact peak
+boundaries. RefSeq Select tracks provide gene context.
 
-### Candidate newly accessible region upstream of BCL3
+Within each screenshot, all four ATAC tracks share one CPM range and all
+four pSTAT3 tracks share another. FAM167B uses ATAC 0–1 and pSTAT3 0–1.5;
+MYC uses ATAC 0–3 and pSTAT3 0–2.5; the replicate-disagreement example uses
+ATAC 0–2 and pSTAT3 0–2.5. These matched ranges permit comparisons between
+conditions within each assay and locus. Different loci use different ranges,
+so displayed peak heights should not be compared across figures.
 
-Go to `chr19:44,740,000-44,755,000`. The selected peak is
-`chr19:44,744,822-44,745,915`, approximately 2–4 kb upstream of the BCL3
-transcription start site. Both IL6 replicates show increased ATAC coverage and
-strong pSTAT3 occupancy, whereas the control ATAC samples have low coverage
-and no called peak at this interval.
+### Candidate newly accessible region near the FAM167B TSS
 
-Save the screenshot as `figures/bcl3_candidate_new_accessibility.png`.
+Go to `chr1:32,244,000-32,250,000` and mark the representative interval
+`chr1:32,246,830-32,247,577`. These are the BED boundaries of
+`pstat3_il6_r1_peak_1218`; the overlapping replicate-2 peak is
+`pstat3_il6_r2_peak_1289`. The overlapping IL6 ATAC peaks are
+`atac_il6_r1_peak_1680` (BED `chr1:32,246,838-32,247,141`) and
+`atac_il6_r2_peak_1555` (BED `chr1:32,246,843-32,247,316`).
 
-![Candidate IL6-associated newly accessible region upstream of BCL3](figures/bcl3_candidate_new_accessibility.png)
+The positive-strand RefSeq Select transcript `NM_032648.3` has its TSS at
+hg38 `chr1:32,247,222` (1-based). The representative pSTAT3 interval spans
+this TSS, extending approximately 391 bp upstream and 355 bp downstream;
+both IL6 ATAC peaks lie within about 0.4 kb immediately upstream of the TSS.
+This is therefore a **FAM167B TSS-proximal candidate promoter-associated
+region**, without functional validation of promoter activity. Annotation was
+retrieved on 2026-11-02 from the
+[UCSC hg38 RefSeq Select table](https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeqSelect.txt.gz);
+the selected transcript row is retained in
+[`results/igv_candidates/selected_FAM167B_annotation.tsv`](results/igv_candidates/selected_FAM167B_annotation.tsv).
+BED intervals are 0-based, half-open; IGV navigation is 1-based.
 
-### Pre-existing accessible region at the MYC promoter
+Both IL6 replicates have overlapping ATAC and pSTAT3 peaks; neither control
+ATAC replicate nor either control pSTAT3 replicate has a called peak
+overlapping the representative interval. Mean ATAC CPM across this interval
+is 0.062/0.059 in control and 0.118/0.129 after IL6; mean pSTAT3 CPM is
+0.030/0.016 in control and 0.332/0.403 after IL6. These FAM167B means include
+all bases, treating uncovered bigWig positions as zero. Control ATAC signal
+is low but not absent. "Candidate newly accessible" denotes the existing
+peak-overlap classification, not a statistically validated change from
+completely closed chromatin.
 
-Go to `chr8:127,731,000-127,746,000`. The selected peak is
-`chr8:127,734,758-127,736,623` at the MYC promoter. ATAC coverage is present in
-both control replicates and remains accessible after IL6 treatment, while
-pSTAT3 occupancy increases in both IL6 replicates.
+In the screenshot, all four ATAC tracks use 0–1 CPM and all four pSTAT3
+tracks use 0–1.5 CPM. The red outline contains the TSS-proximal IL6 peaks;
+the separate ATAC peak to its right is already present in control.
 
-Save the screenshot as `figures/myc_preexisting_accessibility.png`.
+![Candidate IL6-associated newly accessible region near the FAM167B TSS](images/fam167b_candidate_new_accessibility.png)
 
-![Pre-existing accessible region at the MYC promoter](figures/myc_preexisting_accessibility.png)
+### Pre-existing accessible region overlapping the MYC TSS
+
+Go to `chr8:127,731,000-127,746,000` and mark the representative interval
+`chr8:127,734,758-127,736,623`. This interval uses the boundaries of
+`pstat3_il6_r1_peak_57888`; the overlapping replicate-2 peak is
+`pstat3_il6_r2_peak_62257`. The corresponding ATAC peaks are
+`atac_control_r1_peak_84327`, `atac_control_r2_peak_72773`,
+`atac_il6_r1_peak_80024`, and `atac_il6_r2_peak_76418`.
+
+The interval spans the positive-strand MYC annotated 5-prime boundary at
+hg38 `chr8:127,735,434`, extending approximately 0.68 kb upstream and
+1.19 kb downstream
+([NCBI Gene, GRCh38.p14, RS_2025_08](https://www.ncbi.nlm.nih.gov/gene/4609)).
+It is therefore described as a **MYC TSS-overlapping, candidate
+promoter-associated region**. It includes both upstream sequence and the
+5-prime part of the annotated gene, rather than an exclusively upstream
+region. The positional annotation supports this description but does not
+by itself demonstrate promoter activity in these samples.
+
+Both control ATAC replicates already have peaks at this locus, and peaks
+remain present in both IL6 ATAC replicates. Both IL6 pSTAT3 replicates show
+enrichment and overlapping peaks, whereas neither control pSTAT3 replicate
+has a called peak here. This illustrates IL6-associated pSTAT3 recruitment to
+pre-existing accessible chromatin, without requiring a claim of increased
+ATAC accessibility. The red outline contains the TSS-overlapping peak group.
+All four ATAC tracks use 0–3 CPM, and all four pSTAT3 tracks use
+0–2.5 CPM. On these matched scales, control ATAC accessibility is clearly
+visible, while pSTAT3 signal is higher in both IL6 replicates.
+
+![Pre-existing accessible region overlapping the MYC TSS](images/myc_preexisting_accessibility.png)
 
 ### Region where ATAC replicates disagree
 
 Go to `chr19:18,269,000-18,281,000`. The interval
 `chr19:18,274,459-18,275,754` has substantially higher ATAC coverage in
-replicate 1 than replicate 2 in both conditions. It is called as an IL6 ATAC
-peak only in replicate 1 and has no corresponding IL6 pSTAT3 enrichment. This
-example shows why replicate-specific peaks were not treated as reproducible
-chromatin changes.
+replicate 1 than replicate 2 in both conditions. In each condition, an ATAC
+peak is called only in replicate 1: `atac_control_r1_peak_42126` and
+`atac_il6_r1_peak_40241` overlap the interval, whereas neither replicate-2
+ATAC sample has an overlapping peak. There is no called IL6 pSTAT3 peak
+at this target interval. The separate IL6 pSTAT3 peaks near JUND at the
+right edge of the window are outside the target and should not be confused
+with it. All four ATAC tracks use 0–2 CPM and all four pSTAT3 tracks use
+0–2.5 CPM. The red outline highlights the ATAC replicate
+disagreement. This example shows why a peak detected in only one replicate
+was not treated as a reproducible chromatin change.
 
-Save the screenshot as `figures/atac_replicate_disagreement.png`.
-
-![Region where ATAC replicates disagree](figures/atac_replicate_disagreement.png)
+![Region where ATAC replicates disagree](images/atac_replicate_disagreement.png)
 
 The mean CPM values for all three examples are recorded in
 [`results/representative_regions.tsv`](results/representative_regions.tsv).
@@ -174,8 +232,13 @@ IL6 treatment produced a strong and reproducible increase in pSTAT3 chromatin
 occupancy. Of 54,973 reproducible IL6-gained pSTAT3 peaks, 33,702 (61.3%)
 overlapped accessible chromatin in IL6-treated cells. Most of these regions
 were already accessible in control cells, whereas 935 (2.8%) were candidate
-newly accessible regions. The MYC promoter and an upstream region near BCL3
-illustrate these two patterns, respectively. These observations are
+newly accessible regions. The MYC TSS-overlapping region illustrates
+pre-existing accessibility, whereas the FAM167B TSS-proximal region illustrates
+candidate newly accessible chromatin. Both are described as candidate
+promoter-associated regions based on their positions relative to annotated
+TSSs; promoter function and effects on gene expression were not tested.
+The third example illustrates replicate disagreement rather than a reliable
+IL6-associated accessibility change. These observations are
 consistent with the localized IL6-associated chromatin remodeling reported by
 Siersbæk et al.; peak presence or absence here is not a formal differential
 accessibility test.
@@ -188,7 +251,7 @@ accessibility test.
 - [`results/accessibility_classes.tsv`](results/accessibility_classes.tsv):
   pSTAT3/ATAC classification counts.
 - [`results/representative_regions.tsv`](results/representative_regions.tsv):
-  signal values for the two IGV examples.
+  signal values for the three IGV examples.
 
 Large FASTQ, BAM, bigWig, peak, reference, and intermediate files are excluded
 from GitHub by `.gitignore` and are regenerated by the Makefile.
