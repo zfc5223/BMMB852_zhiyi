@@ -1,0 +1,9 @@
+fasta/
+fastq/
+gtf/
+bam/
+bw/
+bw_cpm/
+counts/
+design.csv
+
