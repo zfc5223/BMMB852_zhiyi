@@ -29,8 +29,10 @@ Do the gene counts support the [IGV coverage comparison](../week11/images/01_wid
 | Gene | Earlier IGV observation | Salmon gene counts |
 |---|---|---|
 | [`OR11H1`](../week11/images/03_or11h1_unexpressed.png) | No visible coverage | 0 in all six samples |
-| [`DDX17`](../week11/images/04_ddx17_gene.png) | Strong coverage in both groups | About 771–1,412 in every sample |
+| [`DDX17`](../week11/images/04_ddx17_gene.png) | Strong coverage in both groups | 771–917 in HBR; 853–1,412 in UHR |
 | [`SULT4A1`](../week11/images/06_sult4a1_gene.png) | Stronger in HBR | 284–327 in HBR; 3–5 in UHR |
+
+The counts support all three visual observations. For `SULT4A1`, the mean estimated count is 298 in HBR and 3.7 in UHR, about 81-fold higher in HBR. This agrees with the strong HBR signal seen in IGV; the earlier ~100-fold figure was a visual estimate of coverage, not a count-based ratio.
 
 ## Six-method comparison
 
