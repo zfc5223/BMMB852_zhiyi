@@ -34,7 +34,7 @@ STRINGTIE_GTFS = $(addprefix results/stringtie/,$(addsuffix .gtf,$(SAMPLES)))
 SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c
 
-# Set DATA_DIR=../week11 to reuse already extracted input data.
+# Set DATA_DIR to an already extracted copy of the course input data if desired.
 $(GENOME) $(TRANSCRIPTS) $(GTF) $(FASTQS) &:
 	if [ "$(DATA_DIR)" != "data" ]; then \
 		echo "Missing input in DATA_DIR=$(DATA_DIR); provide all six FASTQs, FASTA and GTF" >&2; exit 1; \
