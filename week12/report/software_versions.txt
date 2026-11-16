@@ -1,0 +1,13 @@
+2.7.11b
+
+featureCounts v2.1.1
+
+Current version: RSEM v1.3.1
+salmon 1.11.4
+kallisto, version 0.51.1
+/home/zhiyi/1data/projects/09.07.26_zhiyi_BMMB852_1/week12/.pixi/envs/default/bin/hisat2-align-s version 2.2.3
+2.2.3
+samtools 1.23
+time (GNU Time) 1.10
+Rscript (R) version 4.5.2 (2025-10-31)
+tximport 1.38.2 

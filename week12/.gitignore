@@ -1,0 +1,9 @@
+data/
+refs/
+results/
+logs/
+.pixi/
+src/vendor/
+__pycache__/
+!pixi.toml
+!pixi.lock

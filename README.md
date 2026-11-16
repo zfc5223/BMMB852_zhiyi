@@ -19,3 +19,4 @@ results for that project.
 | Week 9 | Parallel bacterial variant calling | [README](./week09/README.md) |
 | Week 10 | ChIP-seq and ATAC-seq peak calling | [README](./week10/README.md) |
 | Week 11 | Visual evaluation of RNA-seq expression | [README](./week11/README.md) |
+| Week 12 | Comparing RNA-seq quantification methods | [README](./week12/README.md) |
